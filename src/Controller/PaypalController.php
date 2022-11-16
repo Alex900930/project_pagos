@@ -19,6 +19,7 @@
         */
         public function realizarpago($met_pago){
             
+            
             return new Response('Metodo de pago '. $met_pago. ' realizandose...');
 
         }
