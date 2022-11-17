@@ -5,6 +5,7 @@
    use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
    use Symfony\Component\Routing\Annotation\Route;
    use Symfony\Component\HttpFoundation\Response;
+   use App\Controller\PaypalPago;
    use Symfony\Component\HttpFoundation\Request;
    use Symfony\Component\HttpFoundation\JsonResponse; 
    use Doctrine\ORM\EntityManagerInterface;
@@ -13,15 +14,21 @@
 
     class PaypalController extends AbstractController
     {
+        private $paypalPago;
+        public function __construct(PaypalPago $paypalPago){
+            $this->paypalPago= $paypalPago;
+        }
+        
         /**
-        * @Route("/realizar_pago/{met_pago}", name="metodo_pago")
+        * @Route("/pago_paypal/{met_pago}", name="metodo_pago")
         *  
         */
-        public function realizarpago($met_pago){
+        public function pago_paypal($met_pago){
             
             
-            return new Response('Metodo de pago '. $met_pago. ' realizandose...');
-
+            $create_order= $this->paypalPago->createOrder();
+            return new Response('Esta es la orden: '.$create_order);
+             
         }
 
         

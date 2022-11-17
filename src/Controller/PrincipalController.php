@@ -40,7 +40,7 @@ use Doctrine\Common\Collections\Expr\Value;
                      
                       break;
                   case $met_pago== 'paypal':
-                     return new Response($this->forward('App\Controller\PaypalController::realizarpago', [
+                     return new Response($this->forward('App\Controller\PaypalController::pago_paypal', [
                         'met_pago' => $met_pago
                      ]));
                        break;
@@ -66,7 +66,7 @@ use Doctrine\Common\Collections\Expr\Value;
                         break;         
               }
                
-            }
+            }break;
          }   
              
 
