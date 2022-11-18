@@ -13,18 +13,18 @@
 
     class TropipayController extends AbstractController
     {
-        /**
-        * @Route("/realizar_pago/{met_pago}", name="metodo_pago")
-        *  
-        */
-        public function realizarpago($met_pago){
-            $response= new Response();
-            $response = $response->setContent('Metodo de pago '. $met_pago. ' realizandose...');
-            return $response;
+        #[Route('/met_tropipay/{met_pago}', name: 'app_met_tropipay')]
+        public function pagotropipay(Request $request, string $met_pago): JsonResponse
+        {
+            $name = $this->metod1();
+            return new JsonResponse(['data'=>'Hola ' . $met_pago. ' '.$name]);
 
 
         }
 
+        private function metod1(){
+            return 'Pepe';
+        }
+
 
     }
-?>

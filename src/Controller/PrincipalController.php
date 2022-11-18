@@ -14,10 +14,13 @@ use Doctrine\Common\Collections\Expr\Value;
    class PrincipalController extends AbstractController
    {
      
-    /**
-     * @Route("/{met_pago}", name="obtener_metodo_pago")
-     *  
-     */
+    #[Route('/', name: 'app_home')]
+    public function index(): Response
+    {
+        return new JsonResponse(['data'=>'Hola']);
+    } 
+
+    #[Route('/{met_pago}', name:'app_met_mercado')]
      public function obtener_metodo_pago($met_pago)
      {
          $tipos_Metodo= ['tropipay', 'wellsfargo', 'paypal', 'mercadopago', 'amazon', 'redsys', 'mollie'];
@@ -28,7 +31,7 @@ use Doctrine\Common\Collections\Expr\Value;
                // echo "Este es el metodo de pago " .$met_pago;
                switch ($met_pago) {
                   case $met_pago== 'tropipay':
-                     return new Response($this->forward('App\Controller\TropipayController::realizarpago', [
+                     return new Response($this->forward('App\Controller\TropipayController::pagotropipay', [
                         'met_pago' => $met_pago
                      ]));
                      
@@ -40,7 +43,7 @@ use Doctrine\Common\Collections\Expr\Value;
                      
                       break;
                   case $met_pago== 'paypal':
-                     return new Response($this->forward('App\Controller\PaypalController::pago_paypal', [
+                     return new Response($this->forward('App\Controller\PaypalController::realizarpago', [
                         'met_pago' => $met_pago
                      ]));
                        break;
@@ -104,4 +107,3 @@ use Doctrine\Common\Collections\Expr\Value;
    }
 
 
-?>

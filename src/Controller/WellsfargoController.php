@@ -13,16 +13,17 @@
 
     class WellsfargoController extends AbstractController
     {
-        /**
-        * @Route("/realizar_pago/{met_pago}", name="metodo_pago")
-        *  
-        */
-        public function realizarpago($met_pago){
+        #[Route('/met_wellsfargo/{met_pago}', name: 'app_met_well')]
+        public function realizarpago(Request $request, string $met_pago): JsonResponse
+        {
             
-            return new Response('Metodo de pago '. $met_pago. ' realizandose...');
+            $name = $this->metod1();
+            return new JsonResponse(['data'=>'Hola ' .$name . ' '.$met_pago]);
 
         }
 
+        private function metod1(){
+            return 'Pepe';
+        }
         
     }
-?>

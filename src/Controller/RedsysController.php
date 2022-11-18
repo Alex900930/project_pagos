@@ -13,16 +13,13 @@
 
     class RedsysController extends AbstractController
     {
-        /**
-        * @Route("/realizar_pago/{met_pago}", name="metodo_pago")
-        *  
-        */
-        public function realizarpago($met_pago){
+        #[Route('/met_redsys/{met_pago}', name: 'app_met_redsys')]
+        public function realizarpago(Request $request, string $met_pago): JsonResponse
+        {
             
-            return new Response('Metodo de pago '. $met_pago. ' realizandose...');
+            return new JsonResponse(['data'=>'Hola ' .$met_pago]);
 
         }
 
         
     }
-?>
