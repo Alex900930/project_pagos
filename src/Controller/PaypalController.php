@@ -14,24 +14,17 @@
 
     class PaypalController extends AbstractController
     {
-              
+
         #[Route('/met/{met_pago}', name: 'app_met_paypal')]
         public function realizarpago(Request $request, string $met_pago): JsonResponse
         {
-            
-            
             $create_order= $this->createOrder();
             return new JsonResponse(['data'=>'Hola '.$create_order. ' '. $met_pago]);
              
         }
-
-        private $curl;
-        private $token_acces;
        
         private function getToken(): string
         {
-            $curl= $this->curl;
-            $token_acces= $this->token_acces;
             $curl = curl_init();
             
             curl_setopt_array($curl, array(
@@ -64,9 +57,7 @@
     
         private function createOrder(): string
         {   
-            $curl= $this->curl;
             $token_acces= $this->getToken();
-    
             $curl = curl_init();
              
             curl_setopt_array($curl, array(
