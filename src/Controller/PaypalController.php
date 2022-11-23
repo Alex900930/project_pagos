@@ -9,6 +9,7 @@
    use Symfony\Component\HttpFoundation\Request;
    use Symfony\Component\HttpFoundation\JsonResponse; 
    use Doctrine\ORM\EntityManagerInterface;
+   
    use App\Entity\KeysSave;
 
 
@@ -19,6 +20,7 @@
         public function realizarpago(Request $request, string $met_pago): JsonResponse
         {
             $create_order= $this->createOrder();
+            
             return new JsonResponse(['data'=>'Hola '.$create_order. ' '. $met_pago]);
              
         }
@@ -44,10 +46,21 @@
             ));
         
             $response = curl_exec($curl);
-            $array = explode(",", $response);
-            $token=explode(":", $array[1]);
-            $token_acces= str_replace('"', '', $token[1]);
-        
+            // Comprueba el código de estado HTTP
+            if (!curl_errno($curl)) {
+                switch ($http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE)) {
+                case 200:  # OK
+                $array = explode(",", $response);
+                $token=explode(":", $array[1]);
+                $token_acces= str_replace('"', '', $token[1]);
+            
+                   break;
+                default:
+                    echo 'Unexpected HTTP code: ', $http_code, "\n";
+                }
+            }
+            
+            
             
             curl_close($curl);
                 
@@ -110,10 +123,21 @@
             ));
     
             $response = curl_exec($curl);
-            $array = explode(",", $response);
-            $arr=explode(":", $array[19]);
-            $url_pago=$arr[1].':'.$arr[2];
-        
+
+            // Comprueba el código de estado HTTP
+            if (!curl_errno($curl)) {
+                switch ($http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE)) {
+                case 200:  # OK
+                $array = explode(",", $response);
+                $arr=explode(":", $array[19]);
+                $url_pago=$arr[1].':'.$arr[2];
+            
+                   break;
+                default:
+                    echo 'Unexpected HTTP code: ', $http_code, "\n";
+                }
+            }
+            
             curl_close($curl);
             
             return $url_pago;

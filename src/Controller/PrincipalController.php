@@ -15,14 +15,16 @@ use Doctrine\Common\Collections\Expr\Value;
    {
      
     #[Route('/', name: 'app_home')]
-    public function index(): Response
+    public function index(): JsonResponse
     {
-        return new JsonResponse(['data'=>'Hola']);
+      
+      return new JsonResponse(['data'=>'Hola']);
     } 
 
     #[Route('/{met_pago}', name:'app_met_mercado')]
      public function obtener_metodo_pago($met_pago)
-     {
+     {   
+        
          $tipos_Metodo= ['tropipay', 'wellsfargo', 'paypal', 'mercadopago', 'amazon', 'redsys', 'mollie'];
          foreach($tipos_Metodo as $value){
             if($met_pago != $value && !in_array($met_pago, $tipos_Metodo)){
@@ -31,7 +33,7 @@ use Doctrine\Common\Collections\Expr\Value;
                // echo "Este es el metodo de pago " .$met_pago;
                switch ($met_pago) {
                   case $met_pago== 'tropipay':
-                     return new Response($this->forward('App\Controller\TropipayController::pagotropipay', [
+                     return new JsonResponse($this->forward('App\Controller\TropipayController::pagotropipay', [
                         'met_pago' => $met_pago
                      ]));
                      
