@@ -11,22 +11,33 @@
    use Doctrine\ORM\EntityManagerInterface;
    
    use App\Entity\KeysSave;
-
+   use App\Repository\KeysSaveRepository;
 
     class PaypalController extends AbstractController
     {
 
+        //private $keySaveRepo; 
+        public function __construct(KeysSaveRepository $keySaveRepo) {
+            $this->keySaveRepo=$keySaveRepo; ;
+        }
+         
+
         #[Route('/met/{met_pago}', name: 'app_met_paypal')]
-        public function realizarpago(Request $request, string $met_pago): JsonResponse
+        public function realizarpago(string $met_pago): JsonResponse
         {
             $create_order= $this->createOrder();
             
-            return new JsonResponse(['data'=>'Hola '.$create_order. ' '. $met_pago]);
+            return new JsonResponse(['data'=>'Hola, '.$create_order. ', '. $met_pago]);
              
         }
-       
+        
         private function getToken(): string
-        {
+        {   
+            
+            $paypal= $this->keySaveRepo->findOneBy(['name'=>'Paypal']);
+            $paypal_t= $paypal->getApiKey3();
+            $paypal_string=strval($paypal_t);
+
             $curl = curl_init();
             
             curl_setopt_array($curl, array(
@@ -40,8 +51,8 @@
             CURLOPT_CUSTOMREQUEST => 'POST',
             CURLOPT_POSTFIELDS => 'grant_type=client_credentials&ignoreCache=true&return_authn_schemes=true&return_client_metadata=true&return_unconsented_scopes=true',
             CURLOPT_HTTPHEADER => array(
-                'Authorization: Basic QVl0WVhGQmJUX05XcUs4cWs2ZnVYTk92cGNzbldqU0xiVmN4VlljMlZsTVFVM1FHU2lKWVhfSlJkSXV5QWlhV0c4UVU5SUdFbklIbE1MU3c6RUdyc3Y1VGhuZnQ0RzdGOTdPcVJRSFlOQU1sSlR3eTl2ZGF4YkwxNUl5OFJCOXZZLVU4Q001U0pDTGZYS0F3SV9uUXJZN1RLSjRQYWZZcUc=',
-                'Content-Type: application/x-www-form-urlencoded'
+                'Content-Type: application/x-www-form-urlencoded',
+                'Authorization: Basic '.$paypal_string
             ),
             ));
         
@@ -50,24 +61,22 @@
             if (!curl_errno($curl)) {
                 switch ($http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE)) {
                 case 200:  # OK
-                $array = explode(",", $response);
-                $token=explode(":", $array[1]);
-                $token_acces= str_replace('"', '', $token[1]);
-            
-                   break;
+                break;
                 default:
                     echo 'Unexpected HTTP code: ', $http_code, "\n";
                 }
             }
             
+            $array = explode(",", $response);
+            $token=explode(":", $array[1]);
+            $token_acces= str_replace('"', '', $token[1]);
             
             
             curl_close($curl);
-                
+           
             return $token_acces;
         }
-        
-    
+            
         private function createOrder(): string
         {   
             $token_acces= $this->getToken();
@@ -128,15 +137,16 @@
             if (!curl_errno($curl)) {
                 switch ($http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE)) {
                 case 200:  # OK
-                $array = explode(",", $response);
-                $arr=explode(":", $array[19]);
-                $url_pago=$arr[1].':'.$arr[2];
-            
-                   break;
+                break;
                 default:
                     echo 'Unexpected HTTP code: ', $http_code, "\n";
                 }
             }
+            
+            $array = explode(",", $response);
+            print_r(gettype($array));
+            $arr= explode(":", $array[19]);
+            $url_pago=$arr[1].':'.$arr[2];
             
             curl_close($curl);
             
