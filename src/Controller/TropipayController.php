@@ -47,20 +47,19 @@
             $response = curl_exec($curl);
             
             // Comprueba el código de estado HTTP
-            if (!curl_errno($curl)) {
-                switch ($http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE)) {
-                case 200:  # OK
-                $array = explode(",", $response);
-                $token1=explode(":", $array[0]);
-                $token2= str_replace('"', '', $token1[1]);
-                
-                   break;
-                default:
-                    echo 'Unexpected HTTP code: ', $http_code, "\n";
-                }
+            if(curl_exec($curl) === false)
+            {
+                echo 'Status Code: ' . curl_error($curl). 'Please Review';
+            }
+            else
+            {
+                echo 'Operación completada sin errores';
             }
   
-            
+            $array = explode(",", $response);
+            $token1=explode(":", $array[0]);
+            $token2= str_replace('"', '', $token1[1]);
+                
             
             curl_close($curl);
             
@@ -106,19 +105,18 @@
             $response = curl_exec($curl);
             
             // Comprueba el código de estado HTTP
-            if (!curl_errno($curl)) {
-                switch ($http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE)) {
-                case 200:  # OK
-                $array = explode(",", $response);
-                $array1=explode(":", $array[25]);
-                $arr=$array1[1].':'.$array1[2];
-                
-                   break;
-                default:
-                    echo 'Unexpected HTTP code: ', $http_code, "\n";
-                }
+            if(curl_exec($curl) === false)
+            {
+                echo 'Status Code: ' . curl_error($curl). 'Please Review';
+            }
+            else
+            {
+                echo 'Operación completada sin errores';
             }
             
+            $array = explode(",", $response);
+            $array1=explode(":", $array[25]);
+            $arr=$array1[1].':'.$array1[2];
                         
             curl_close($curl);
             return $arr;

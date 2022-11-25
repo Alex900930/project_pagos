@@ -5,7 +5,6 @@
    use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
    use Symfony\Component\Routing\Annotation\Route;
    use Symfony\Component\HttpFoundation\Response;
-   use App\Controller\PaypalPago;
    use Symfony\Component\HttpFoundation\Request;
    use Symfony\Component\HttpFoundation\JsonResponse; 
    use Doctrine\ORM\EntityManagerInterface;
@@ -27,7 +26,7 @@
         {
             $create_order= $this->createOrder();
             
-            return new JsonResponse(['data'=>'Hola, '.$create_order. ', '. $met_pago]);
+            return new JsonResponse(['data'=>'Hola, '.$create_order.', '. $met_pago]);
              
         }
         
@@ -58,14 +57,12 @@
         
             $response = curl_exec($curl);
             // Comprueba el código de estado HTTP
-            if (!curl_errno($curl)) {
-                switch ($http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE)) {
-                case 200:  # OK
-                break;
-                default:
-                    echo 'Unexpected HTTP code: ', $http_code, "\n";
-                }
+            if($response == null)
+            {
+                echo '400 Bad Request';
+                
             }
+           
             
             $array = explode(",", $response);
             $token=explode(":", $array[1]);
@@ -77,7 +74,7 @@
             return $token_acces;
         }
             
-        private function createOrder(): string
+        public function createOrder(): string
         {   
             $token_acces= $this->getToken();
             $curl = curl_init();
@@ -132,17 +129,7 @@
             ));
     
             $response = curl_exec($curl);
-
-            // Comprueba el código de estado HTTP
-            if (!curl_errno($curl)) {
-                switch ($http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE)) {
-                case 200:  # OK
-                break;
-                default:
-                    echo 'Unexpected HTTP code: ', $http_code, "\n";
-                }
-            }
-            
+                  
             $array = explode(",", $response);
             print_r(gettype($array));
             $arr= explode(":", $array[19]);
