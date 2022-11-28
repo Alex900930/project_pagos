@@ -6,7 +6,8 @@
    use Symfony\Component\Routing\Annotation\Route;
    use Symfony\Component\HttpFoundation\Response;
    use Symfony\Component\HttpFoundation\Request;
-   use Symfony\Component\HttpFoundation\JsonResponse; 
+   use Symfony\Component\HttpFoundation\JsonResponse;
+   use Symfony\Contracts\HttpClient\HttpClientInterface;
    use Doctrine\ORM\EntityManagerInterface;
    
    use App\Entity\KeysSave;
@@ -15,12 +16,12 @@
     class PaypalController extends AbstractController
     {
 
-        //private $keySaveRepo; 
-        public function __construct(KeysSaveRepository $keySaveRepo) {
-            $this->keySaveRepo=$keySaveRepo; ;
+        private HttpClientInterface $httpClient;
+        public function __construct(KeysSaveRepository $keySaveRepo, HttpClientInterface $httpClient) {
+            $this->keySaveRepo=$keySaveRepo;
+            $this->httpClient=$httpClient;
         }
          
-
         #[Route('/met/{met_pago}', name: 'app_met_paypal')]
         public function realizarpago(string $met_pago): JsonResponse
         {
@@ -30,6 +31,27 @@
              
         }
         
+        #[Route('/token', name: 'app_met_a')]
+        public function getToken1()
+        {   
+            $paypal= $this->keySaveRepo->findOneBy(['name'=>'Paypal']);
+            $paypal_t= $paypal->getApiKey3();
+            $paypal_string=strval($paypal_t);
+
+            $requestData = ['grant_type=client_credentials&ignoreCache=true&return_authn_schemes=true&return_client_metadata=true&return_unconsented_scopes=true'];
+            $expectedRequestData = json_encode($requestData, JSON_THROW_ON_ERROR);
+
+
+
+            $response= $this->httpClient->request('POST', 'https://api-m.sandbox.paypal.com/v1/oauth2/token',[ 
+                                                  'headers'=>[
+                                                    'Content-Type: application/x-www-form-urlencoded',
+                                                    'Authorization: Basic '.$paypal_t],
+                                                    'body' => $expectedRequestData
+                                                ]);
+            return new JsonResponse($response);                                    
+        }
+
         private function getToken(): string
         {   
             
