@@ -62,8 +62,8 @@ class AppFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
         $this->Paypal($manager);
-        //$this->Tropipay($manager);
-        //$this->OtraInfo($manager);
+        $this->Tropipay($manager);
+        $this->OtraInfo($manager);
         $manager->flush();
     }
 }
