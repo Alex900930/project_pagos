@@ -18,11 +18,13 @@
     {
 
         private HttpClientInterface $httpClient;
-        public function __construct(KeysSaveRepository $keySaveRepo, OtraInfoRepository $otraInfoRepository, 
+        private KeysSaveRepository $keySaveRepo;
+        private OtraInfoRepository $otraInfoRepo;
+        public function __construct(KeysSaveRepository $keySaveRepo, OtraInfoRepository $otraInfoRepo, 
                                     HttpClientInterface $httpClient) {
             $this->keySaveRepo=$keySaveRepo;
             $this->httpClient=$httpClient;
-            $this->otraInfoRepo=$otraInfoRepository;
+            $this->otraInfoRepo=$otraInfoRepo;
         }
          
         #[Route('/met/{met_pago}', name: 'app_met_paypal')]
@@ -101,9 +103,10 @@
             $array = json_decode($response, true);
         
             $token_acces= $array['access_token'] ;          
-        
-            return $token_acces;
+            
             curl_close($curl);
+            return $token_acces;
+            
             
         }
             
