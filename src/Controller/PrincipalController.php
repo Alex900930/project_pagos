@@ -9,7 +9,7 @@
    use Symfony\Component\HttpFoundation\JsonResponse; 
    use Doctrine\ORM\EntityManagerInterface;
    use App\Entity\KeysSave;
-use Doctrine\Common\Collections\Expr\Value;
+
 
    class PrincipalController extends AbstractController
    {
@@ -37,41 +37,39 @@ use Doctrine\Common\Collections\Expr\Value;
                         'met_pago' => $met_pago
                      ]));
                      
-                      break;
                   case $met_pago== 'wellsfargo':
                      return new Response($this->forward('App\Controller\WellsfargoController::realizarpago', [
                         'met_pago' => $met_pago
                      ]));
-                     
-                      break;
+                  
                   case $met_pago== 'paypal':
                      return new Response($this->forward('App\Controller\PaypalController::realizarpago', [
                         'met_pago' => $met_pago
                      ]));
-                       break;
+                       
                   case $met_pago== 'mercadopago':
                      return new Response($this->forward('App\Controller\MercadopagoController::realizarpago', [
                         'met_pago' => $met_pago
                      ]));
-                       break;
+                       
                   case $met_pago== 'amazon':
                      return new Response($this->forward('App\Controller\AmazonController::realizarpago', [
                         'met_pago' => $met_pago
                      ]));          
-                      break;
+                     
                   case $met_pago== 'redsys':
                      return new Response($this->forward('App\Controller\MollieController::realizarpago', [
                         'met_pago' => $met_pago
                      ]));          
-                       break;
+                     
                   case $met_pago== 'mollie':
                      return new Response($this->forward('App\Controller\RedsysController::realizarpago', [
                         'met_pago' => $met_pago
                      ]));          
-                        break;         
+                                 
               }
                
-            }break;
+            }
          }   
              
 
@@ -106,6 +104,11 @@ use Doctrine\Common\Collections\Expr\Value;
      }
 
 
+   
+   /**
+    */
+   public function __construct() {
    }
+}
 
 

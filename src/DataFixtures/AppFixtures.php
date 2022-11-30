@@ -3,8 +3,8 @@
 namespace App\DataFixtures;
 
 use App\Entity\KeysSave;
-use App\Entity\UsuarioContra;
 use App\Entity\OtraInfo;
+use App\Entity\UsuarioContra;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
