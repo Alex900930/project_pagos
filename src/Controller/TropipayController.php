@@ -2,17 +2,25 @@
      
    namespace App\Controller;
 
+   use App\Repository\OtraInfoRepository;
+   use App\Repository\UsuarioContraRepository;
    use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
    use Symfony\Component\Routing\Annotation\Route;
-   use Symfony\Component\HttpFoundation\Response;
    use Symfony\Component\HttpFoundation\Request;
    use Symfony\Component\HttpFoundation\JsonResponse; 
-   use Doctrine\ORM\EntityManagerInterface;
-   use App\Entity\KeysSave;
+   use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 
     class TropipayController extends AbstractController
-    {
+    {   
+        private HttpClientInterface $httpClient;
+        public function __construct(UsuarioContraRepository $usuarioContra, OtraInfoRepository $otraInfoRepository, 
+                                    HttpClientInterface $httpClient) {
+            $this->usuarioContra=$usuarioContra;
+            $this->httpClient=$httpClient;
+            $this->otraInfoRepo=$otraInfoRepository;
+        }
+
         #[Route('/met_tropipay/{met_pago}', name: 'app_met_tropipay')]
         public function pagotropipay(Request $request, string $met_pago): JsonResponse
         {
@@ -22,8 +30,15 @@
 
         }
 
-        private function getToken(){
+        #[Route('/nueva', name: 'app_getToken')]
+        private function getToken()
+        {
 
+            $tropipay= $this->usuarioContra->findOneBy(['nombre_metodo'=>'Tropipay']);
+            $tropipay_userName= $tropipay->getUsuario();
+            $tropipay_Pasword= $tropipay->getContraseña();
+            
+            echo $tropipay_userName. '<br> Salto <br>'. $tropipay_Pasword;
             $curl = curl_init();
       
             curl_setopt_array($curl, array(
@@ -35,10 +50,11 @@
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS =>'{
-            "email": "aherreramilet@gmail.com",
-            "password": "Harold*1845"
-            }',
+            CURLOPT_POSTFIELDS =>
+            '{
+                 "email":'.$tropipay_userName,
+                 '"password":'.$tropipay_Pasword,
+             '}',
             CURLOPT_HTTPHEADER => array(
                 'Content-Type: application/json'
             ),
@@ -47,20 +63,16 @@
             $response = curl_exec($curl);
             
             // Comprueba el código de estado HTTP
-            if(curl_exec($curl) === false)
+            if(empty($response))
             {
-                echo 'Status Code: ' . curl_error($curl). 'Please Review';
+                echo 'Status Code: 500 Please Review';
             }
-            else
-            {
-                echo 'Operación completada sin errores';
-            }
-  
-            $array = explode(",", $response);
-            $token1=explode(":", $array[0]);
-            $token2= str_replace('"', '', $token1[1]);
-                
             
+            $array = json_decode($response);
+            
+            $token2= $array[1];
+                
+            var_dump($array);
             curl_close($curl);
             
       

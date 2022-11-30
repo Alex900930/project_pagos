@@ -35,36 +35,43 @@
         }
         
         //Funcion para obtener el token por el metodo http-client. La voy ha usar al final.
-        #[Route('/token', name: 'app_met_a')]
+        #[Route('/token', name: 'app_getToken1')]
         public function getToken1()
         {   
             $paypal= $this->keySaveRepo->findOneBy(['name'=>'Paypal']);
-            $paypal_t= $paypal->getApiKey3();
-            $paypal_string=strval($paypal_t);
+            $paypal_userName= $paypal->getApiKey1();
+            $paypal_Pasword= $paypal->getApiKey2();
+            
+            echo $paypal_userName. '<br> Salto <br>'. $paypal_Pasword;
 
-            $requestData = ['grant_type=client_credentials&ignoreCache=true&return_authn_schemes=true&return_client_metadata=true&return_unconsented_scopes=true'];
-            $expectedRequestData = json_encode($requestData, JSON_THROW_ON_ERROR);
+            $login= base64_encode("$paypal_userName:$paypal_Pasword");
 
 
+            echo "\n". '<br> Esto es un salto <br>'.$login;
 
             $response= $this->httpClient->request('POST', 'https://api-m.sandbox.paypal.com/v1/oauth2/token',[ 
                                                   'headers'=>[
-                                                    'Content-Type: application/x-www-form-urlencoded',
-                                                    'Authorization: Basic '.$paypal_string],
-                                                    'body' => $expectedRequestData
+                                                            'Content-Type: application/x-www-form-urlencoded',
+                                                            'Authorization: Basic '.$login
+                                                            ],
+                                                  'body' => 'grant_type=client_credentials&ignoreCache=true&return_authn_schemes=true&return_client_metadata=true&return_unconsented_scopes=true',
                                                 ]);
-            return new JsonResponse($response);                                    
+            //Hago esto porque lo que devuelve el $response es un string, aun no se porque devuelve esto y no un json.                                    
+            // $response_toArray= json_decode($response);                                    
+            // return new JsonResponse($response_toJson);                                    
         }
 
         private function getToken(): string
         {   
             
             $paypal= $this->keySaveRepo->findOneBy(['name'=>'Paypal']);
-            $paypal_t= $paypal->getApiKey3();
-            $paypal_string=strval($paypal_t);
+            $paypal_userName= $paypal->getApiKey1();
+            $paypal_Pasword= $paypal->getApiKey2();
+            
+            $login= base64_encode("$paypal_userName:$paypal_Pasword");
 
             $curl = curl_init();
-            
+
             curl_setopt_array($curl, array(
             CURLOPT_URL => 'https://api-m.sandbox.paypal.com/v1/oauth2/token',
             CURLOPT_RETURNTRANSFER => true,
@@ -77,32 +84,33 @@
             CURLOPT_POSTFIELDS => 'grant_type=client_credentials&ignoreCache=true&return_authn_schemes=true&return_client_metadata=true&return_unconsented_scopes=true',
             CURLOPT_HTTPHEADER => array(
                 'Content-Type: application/x-www-form-urlencoded',
-                'Authorization: Basic '.$paypal_string
+                'Authorization: Basic '.$login
             ),
             ));
-        
+
             $response = curl_exec($curl);
+                    
+            
             // Comprueba el código de estado HTTP
-            if($response == null)
+            if(empty($response))
             {
                 echo '500 Internal Server Error';
                 
             }
-           
-            
-            $array = explode(",", $response);
-            $token=explode(":", $array[1]);
-            $token_acces= str_replace('"', '', $token[1]);
-            
-            
-            curl_close($curl);
-           
+                       
+            $array = json_decode($response, true);
+        
+            $token_acces= $array['access_token'] ;          
+        
             return $token_acces;
+            curl_close($curl);
+            
         }
             
         public function createOrder(): string
         {   
             $token_acces= $this->getToken();
+    
 
             $otrainf= $this->otraInfoRepo->findOneBy(['nombre'=>'Hat']);
             $otrainf_Nombre= $otrainf->getNombre();
@@ -169,16 +177,15 @@
                 'Content-Type: application/json',
                 'Prefer: return=representation',
                 'PayPal-Request-Id: f28f2a1e-aa49-4388-b904-092c47088bef',
-                "Authorization: Bearer ". $token_acces,
-            ),
+                'Authorization: Bearer '. $token_acces
+              ),
             ));
     
             $response = curl_exec($curl);
                   
-            $array = explode(",", $response);
-            print_r($array);
-            $arr= explode(":", $array[19]);
-            $url_pago=$arr[1].':'.$arr[2];
+            $array = json_decode($response);
+            $url_pago= $array[19];
+
             
             curl_close($curl);
             
