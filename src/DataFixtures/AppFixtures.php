@@ -40,6 +40,7 @@ class AppFixtures extends Fixture
         $infoP->setReturnUrl('https://example.com/return');
         $infoP->setCancelUrl('https://example.com/cancel');
         $infoP->setNameMetodo('Paypal');
+        $infoP->setReasonId(1);
         $manager->persist($infoP);
 
         $infoT= new OtraInfo();
@@ -62,7 +63,7 @@ class AppFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
         $this->Paypal($manager);
-        $this->Tropipay($manager);
+//        $this->Tropipay($manager);
         $this->OtraInfo($manager);
         $manager->flush();
     }
