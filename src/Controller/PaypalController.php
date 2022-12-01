@@ -92,7 +92,6 @@
 
             $response = curl_exec($curl);
 
-
             // Comprueba el código de estado HTTP
             if(empty($response))
             {
@@ -106,7 +105,6 @@
 
             curl_close($curl);
             return $token_acces;
-
 
         }
 

@@ -38,15 +38,13 @@
             $tropipay_userName= $tropipay->getUsuario();
             $tropipay_Pasword= $tropipay->getContraseña();
 
-            $data= 
-            '{
-                "email":'.$tropipay_userName;
-                '"password":'.$tropipay_Pasword;
-            '}';
-            
-            echo $tropipay_userName. '<br> Salto <br>'. $tropipay_Pasword .'<br> Salto <br>'. $data;
+            $post_user_pass= array(
+                                    "email" => $tropipay_userName,
+                                    "password"=> $tropipay_Pasword,
+                                  );
+
             $curl = curl_init();
-      
+
             curl_setopt_array($curl, array(
             CURLOPT_URL => 'https://tropipay-dev.herokuapp.com/api/access/login',
             CURLOPT_RETURNTRANSFER => true,
@@ -56,51 +54,64 @@
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS =>$data,
-            CURLOPT_HTTPHEADER => array(
-                'Content-Type: application/json'
-            ),
-            ));
-            
+            CURLOPT_POSTFIELDS => json_encode($post_user_pass, JSON_UNESCAPED_SLASHES),
+            CURLOPT_HTTPHEADER => 
+                array(
+                    'Content-Type: application/json'
+                ),
+                ));
+
             $response = curl_exec($curl);
-            
+
+            curl_close($curl);
+                        
             // Comprueba el código de estado HTTP
             if(empty($response))
             {
                 echo 'Status Code: 500 Please Review';
             }
             
-            $array = json_decode($response);
-            var_dump($array);
-            $token2= $array[1];
-                
+            $array = json_decode($response, true);
             
-            curl_close($curl);
-            
-      
-            return $token2;
+            $token= $array["token"];
+                       
+            return $token;
           }
 
 
         private function getUrl(){
 
             $token=$this->getToken();
-            var_dump($token);
+
+            $otraInfo=$this->otraInfoRepo->findOneBy(['nombre'=>'Motorcycle']);
+            $referencia=$otraInfo->getReferencia();
+            $concepto=$otraInfo->getNombre();
+            $descripcion=$otraInfo->getDescripcion();
+            $amount=$otraInfo->getMontoPagar();
+            $currency=$otraInfo->getCodigoMoneda();
+            $singleuse=$otraInfo->getTipoUso();
+            $reasonId=$otraInfo->getReasonId();
+            $expirationDays=$otraInfo->getExpiraDias();
+            $lang=$otraInfo->getLenguaje();
+            $urlSuccess=$otraInfo->getReturnUrl();
+            $urlFailed=$otraInfo->getCancelUrl();
+            $urlNotification=$otraInfo->getNotificacionUrl();
+
             $curl = curl_init();
-            $postField= '{
-                "reference": "your-own-system-reference",
-                "concept": "test",
-                "description": "test",
-                "amount": 100000,
-                "currency": "EUR",
-                "singleUse": false,
-                "reasonId": 2,
-                "expirationDays": 1,
-                "lang": "es",
-                "urlSuccess": "https://mi-negocio.com/pago-ok",
-                "urlFailed": "https://mi-negocio.com/pago-ko",
-                "urlNotification": "https://mi-negocio.com/notificacion-pago"
-                }';
+            $postField= array(
+                "reference"=> $referencia,
+                "concept"=> $concepto,
+                "description"=>$descripcion,
+                "amount"=> $amount,
+                "currency"=> $currency,
+                "singleUse"=> $singleuse,
+                "reasonId"=> $reasonId,
+                "expirationDays"=> $expirationDays,
+                "lang"=>$lang,
+                "urlSuccess"=> $urlSuccess,
+                "urlFailed"=> $urlFailed,
+                "urlNotification"=> $urlNotification
+            );
             curl_setopt_array($curl, array(
             CURLOPT_URL => 'https://tropipay-dev.herokuapp.com/api/paymentcards',
             CURLOPT_RETURNTRANSFER => true,
@@ -110,7 +121,7 @@
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS =>$postField,
+            CURLOPT_POSTFIELDS =>json_encode($postField,JSON_UNESCAPED_SLASHES),
             CURLOPT_HTTPHEADER => array(
                 'Content-Type: application/json',
                 'Authorization: Bearer '.$token
@@ -126,12 +137,13 @@
                 
             }
             
-            $array = explode(",", $response);
-            $array1=explode(":", $array[25]);
-            $arr=$array1[1].':'.$array1[2];
+            $array = json_decode($response, true);
+            
+            $url_pago= $array["shortUrl"];
                         
             curl_close($curl);
-            return $arr;
+
+            return $url_pago;
         
         }
 
