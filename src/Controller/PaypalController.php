@@ -32,7 +32,7 @@
         {
             $create_order= $this->createOrder();
 
-            return new JsonResponse(['data'=>'Hola, '.$create_order.', '. $met_pago]);
+            return new JsonResponse(['data'=>$create_order.', URL para pagar con el metodo de pago '. $met_pago]);
 
         }
 
@@ -185,10 +185,12 @@
             ));
 
             $response = curl_exec($curl);
-
-            $array = json_decode($response);
-            $url_pago= $array[19];
-
+            //El Objeto que se devuelve en $response se descodifica a un Array, para poder trabajar con su info. 
+            $array = json_decode($response, true);
+            //Obteniendo el valor del link, donde se va ha pagar.
+            $array_value= $array["links"][1]["href"];
+             
+            $url_pago= $array_value;
 
             curl_close($curl);
 
