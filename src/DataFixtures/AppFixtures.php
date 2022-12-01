@@ -32,16 +32,16 @@ class AppFixtures extends Fixture
     private function OtraInfo(ObjectManager $manager)
     {
         $infoP = new OtraInfo();
-        $infoP->setNombre('Hat');
-        $infoP->setDescripcion('Brown');
-        $infoP->setCantidad('1');
-        $infoP->setCodigoMoneda('USD');
-        $infoP->setMontoPagar('5.00');
-        $infoP->setReturnUrl('https://example.com/return');
-        $infoP->setCancelUrl('https://example.com/cancel');
-        $infoP->setNameMetodo('Paypal');
-        $infoP->setReasonId(1);
-        $manager->persist($infoP);
+        $infoP->setNombre('Pullover');
+         $infoP->setDescripcion('Brown');
+         $infoP->setCantidad('1');
+         $infoP->setCodigoMoneda('USD');
+         $infoP->setMontoPagar('5.00');
+         $infoP->setReturnUrl('https://example.com/return');
+         $infoP->setCancelUrl('https://example.com/cancel');
+         $infoP->setNameMetodo('Paypal');
+         $infoP->setReasonId(1);
+         $manager->persist($infoP);
 
         $infoT= new OtraInfo();
         $infoT->setReferencia('New Reference');
@@ -63,7 +63,7 @@ class AppFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
         $this->Paypal($manager);
-//        $this->Tropipay($manager);
+        $this->Tropipay($manager);
         $this->OtraInfo($manager);
         $manager->flush();
     }

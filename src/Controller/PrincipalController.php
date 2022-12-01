@@ -33,22 +33,22 @@
                // echo "Este es el metodo de pago " .$met_pago;
                switch ($met_pago) {
                   case $met_pago== 'tropipay':
-                     return new JsonResponse($this->forward('App\Controller\TropipayController::pagotropipay', [
+                     return ($this->forward('App\Controller\TropipayController::pagotropipay', [
                         'met_pago' => $met_pago
                      ]));
                      
                   case $met_pago== 'wellsfargo':
-                     return new Response($this->forward('App\Controller\WellsfargoController::realizarpago', [
+                     return ($this->forward('App\Controller\WellsfargoController::realizarpago', [
                         'met_pago' => $met_pago
                      ]));
                   
                   case $met_pago== 'paypal':
-                     return new Response($this->forward('App\Controller\PaypalController::realizarpago', [
+                     return ($this->forward('App\Controller\PaypalController::realizarpago', [
                         'met_pago' => $met_pago
                      ]));
                        
                   case $met_pago== 'mercadopago':
-                     return new Response($this->forward('App\Controller\MercadopagoController::realizarpago', [
+                     return ($this->forward('App\Controller\MercadopagoController::realizarpago', [
                         'met_pago' => $met_pago
                      ]));
                        
@@ -58,12 +58,12 @@
                      ]));          
                      
                   case $met_pago== 'redsys':
-                     return new Response($this->forward('App\Controller\MollieController::realizarpago', [
+                     return ($this->forward('App\Controller\MollieController::realizarpago', [
                         'met_pago' => $met_pago
                      ]));          
                      
                   case $met_pago== 'mollie':
-                     return new Response($this->forward('App\Controller\RedsysController::realizarpago', [
+                     return ($this->forward('App\Controller\RedsysController::realizarpago', [
                         'met_pago' => $met_pago
                      ]));          
                                  

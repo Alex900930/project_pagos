@@ -32,7 +32,7 @@
         {
             $create_order= $this->createOrder();
 
-            return new JsonResponse(['data'=>$create_order.', URL para pagar con el metodo de pago '. $met_pago]);
+            return new JsonResponse(['data'=>$create_order]);
 
         }
 

@@ -24,18 +24,16 @@
         }
 
         #[Route('/met_tropipay/{met_pago}', name: 'app_met_tropipay')]
-        public function pagotropipay(Request $request, string $met_pago): JsonResponse
+        public function pagotropipay(string $met_pago): JsonResponse
         {
             $name = $this->getUrl();
-            return new JsonResponse(['data'=>'Hola ' . $met_pago. ' '.$name]);
-
+            return new JsonResponse(['data'=>$name]);
 
         }
 
-        #[Route('/nueva', name: 'app_getToken')]
+        #[Route('/getToken', name: 'app_getToken')]
         private function getToken()
         {
-
             $tropipay= $this->usuarioContra->findOneBy(['usuario'=>'aherreramilet@gmail.com']);
             $tropipay_userName= $tropipay->getUsuario();
             $tropipay_Pasword= $tropipay->getContraseña();
@@ -73,10 +71,10 @@
             }
             
             $array = json_decode($response);
-            
+            var_dump($array);
             $token2= $array[1];
                 
-            var_dump($array);
+            
             curl_close($curl);
             
       
@@ -87,8 +85,22 @@
         private function getUrl(){
 
             $token=$this->getToken();
+            var_dump($token);
             $curl = curl_init();
-        
+            $postField= '{
+                "reference": "your-own-system-reference",
+                "concept": "test",
+                "description": "test",
+                "amount": 100000,
+                "currency": "EUR",
+                "singleUse": false,
+                "reasonId": 2,
+                "expirationDays": 1,
+                "lang": "es",
+                "urlSuccess": "https://mi-negocio.com/pago-ok",
+                "urlFailed": "https://mi-negocio.com/pago-ko",
+                "urlNotification": "https://mi-negocio.com/notificacion-pago"
+                }';
             curl_setopt_array($curl, array(
             CURLOPT_URL => 'https://tropipay-dev.herokuapp.com/api/paymentcards',
             CURLOPT_RETURNTRANSFER => true,
@@ -98,20 +110,7 @@
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS =>'{
-            "reference": "your-own-system-reference",
-            "concept": "test",
-            "description": "test",
-            "amount": 100000,
-            "currency": "EUR",
-            "singleUse": false,
-            "reasonId": 2,
-            "expirationDays": 1,
-            "lang": "es",
-            "urlSuccess": "https://mi-negocio.com/pago-ok",
-            "urlFailed": "https://mi-negocio.com/pago-ko",
-            "urlNotification": "https://mi-negocio.com/notificacion-pago"
-            }',
+            CURLOPT_POSTFIELDS =>$postField,
             CURLOPT_HTTPHEADER => array(
                 'Content-Type: application/json',
                 'Authorization: Bearer '.$token
