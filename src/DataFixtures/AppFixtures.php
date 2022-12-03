@@ -33,15 +33,15 @@ class AppFixtures extends Fixture
     {
         $infoP = new OtraInfo();
         $infoP->setNombre('Pullover');
-         $infoP->setDescripcion('Brown');
-         $infoP->setCantidad('1');
-         $infoP->setCodigoMoneda('USD');
-         $infoP->setMontoPagar('5.00');
-         $infoP->setReturnUrl('https://example.com/return');
-         $infoP->setCancelUrl('https://example.com/cancel');
-         $infoP->setNameMetodo('Paypal');
-         $infoP->setReasonId(1);
-         $manager->persist($infoP);
+        $infoP->setDescripcion('Brown');
+        $infoP->setCantidad('1');
+        $infoP->setCodigoMoneda('USD');
+        $infoP->setMontoPagar('5.00');
+        $infoP->setReturnUrl('https://example.com/return');
+        $infoP->setCancelUrl('https://example.com/cancel');
+        $infoP->setNameMetodo('Paypal');
+        $infoP->setReasonId(1);
+        $manager->persist($infoP);
     
     }
 
@@ -70,7 +70,7 @@ class AppFixtures extends Fixture
         $this->Paypal($manager);
         $this->Tropipay($manager);
         $this->OtraInfoPaypal($manager);
-       // $this->OtraInfoTropipay($manager);
+        $this->OtraInfoTropipay($manager);
         $manager->flush();
     }
 }
