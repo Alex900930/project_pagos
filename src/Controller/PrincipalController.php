@@ -1,3 +1,9 @@
+<!-- 
+
+ PHP: PrincipalController.php
+ BASE DE DATOS: pagos_bd
+
+-->
 <?php
    
    namespace App\Controller;
@@ -13,7 +19,11 @@
 
    class PrincipalController extends AbstractController
    {
-     
+    
+   //    * Funcion inicial o raiz
+   //    *
+   //    * @return un json
+   
     #[Route('/', name: 'app_home')]
     public function index(): JsonResponse
     {
@@ -21,8 +31,12 @@
       return new JsonResponse(['data'=>'Hola']);
     } 
 
-    #[Route('/{met_pago}', name:'app_met_mercado')]
-     public function obtener_metodo_pago($met_pago)
+   // 
+   // * Obtiene el tipo de metodo de pago, pasado en la ruta y llama al controlador de dicho metodo y lo ejecuta.
+   // *
+   // * @return Otro Controlador
+   #[Route('/{met_pago}', name:'app_met_mercado')]
+   public function obtener_metodo_pago($met_pago)
      {   
         
          $tipos_Metodo= ['tropipay', 'wellsfargo', 'paypal', 'mercadopago', 'amazon', 'redsys', 'mollie'];
@@ -74,38 +88,9 @@
              
 
      }
-
-      /**
-     * @Route("/api/createapi", name="create_api_key")
-     *  
-     */
-     public function createApiKey(Request $request, EntityManagerInterface $em){
-
-        $key= new KeysSave();
-        $response = new JsonResponse();
-        $key->setName('wellsfargo');
-        $key->setApiKey1('NXp43wxU5JMX6dGF');
-        $key->setApiKey2('PVqOVoMm0CMdmwHxcXQ77ABISW9guX1N');
-        $em->persist($key);
-        $em->flush();
-        $response->setData([
-            'success'=>true,
-            'data'=>[
-                 [
-                   'id'=>$key->getId(),
-                   'nombre'=>$key->getName(),
-                   'apiKey1'=>$key->getApiKey1(),
-                   'apiKey2'=>$key->getApiKey2()
-                 ]                 
-            ]
-            
-       ]);
-       return $response;
-     }
-
-
-   
+         
    /**
+    * Funcion contructor de la Clase.
     */
    public function __construct() {
    }
