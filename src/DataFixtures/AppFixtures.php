@@ -29,7 +29,7 @@ class AppFixtures extends Fixture
         $manager->persist($user);
     }
 
-    private function OtraInfo(ObjectManager $manager)
+    private function OtraInfoPaypal(ObjectManager $manager)
     {
         $infoP = new OtraInfo();
         $infoP->setNombre('Pullover');
@@ -42,7 +42,11 @@ class AppFixtures extends Fixture
          $infoP->setNameMetodo('Paypal');
          $infoP->setReasonId(1);
          $manager->persist($infoP);
+    
+    }
 
+    private function OtraInfoTropipay(ObjectManager $manager)
+    {
         $infoT= new OtraInfo();
         $infoT->setReferencia('New Reference');
         $infoT->setNombre('Motorcycle');
@@ -57,14 +61,16 @@ class AppFixtures extends Fixture
         $infoT->setCancelUrl('https://mi-negocio.com/pago-ko');
         $infoT->setNotificacionUrl('https://example.com/cancel');
         $infoT->setNameMetodo('Tropipay');
-        $manager->persist($infoT);    
+        $manager->persist($infoT);
+    
     }
 
     public function load(ObjectManager $manager): void
     {
         $this->Paypal($manager);
         $this->Tropipay($manager);
-        $this->OtraInfo($manager);
+        $this->OtraInfoPaypal($manager);
+       // $this->OtraInfoTropipay($manager);
         $manager->flush();
     }
 }
