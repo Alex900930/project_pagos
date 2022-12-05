@@ -20,6 +20,15 @@ class AppFixtures extends Fixture
         $manager->persist($keys);
     }
 
+    private function Wellsfargo(ObjectManager $manager)
+    {
+        $keys_wells = new KeysSave();
+        $keys_wells->setName('Wellsfargo');
+        $keys_wells->setApiKey1('CJzbqWy8sa6ZlLjVk1vz4RMyXpFBw83w');
+        $keys_wells->setApiKey2('MoBrolXyouXe6fjf');
+        $manager->persist($keys_wells);
+    }
+
     private function Tropipay(ObjectManager $manager)
     {
         $user = new UsuarioContra();
@@ -68,6 +77,7 @@ class AppFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
         $this->Paypal($manager);
+        $this->Wellsfargo($manager);
         $this->Tropipay($manager);
         $this->OtraInfoPaypal($manager);
         $this->OtraInfoTropipay($manager);

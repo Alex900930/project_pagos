@@ -1,9 +1,3 @@
-<!-- 
-
- PHP: PrincipalController.php
- BASE DE DATOS: pagos_bd
-
--->
 <?php
    
    namespace App\Controller;
